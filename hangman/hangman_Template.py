@@ -4,13 +4,13 @@ The prints have to contain the same text as indicated, don't add any more prints
 or you will get 0 for this assignment.
 '''
 import random
+from collections import defaultdict
 
 class Hangman:
     '''
     A Hangman Game that asks the user for a letter and checks if it is in the word.
     It starts with a default number of lives and a random word from the word_list.
 
-    
     Parameters:
     ----------
     word_list: list
@@ -42,10 +42,25 @@ class Hangman:
     '''
     def __init__(self, word_list, num_lives=5):
         # TODO 2: Initialize the attributes as indicated in the docstring
+        self.word = random.choice(word_list)
+        self.word_guessed = ["_" for i in range(self.num_letters)]
+        self.num_letters = len(self.word)
+        self.num_lives = num_lives
+        self.list_letters = []
+        self.character_index = self._character_index(word)
         # TODO 2: Print two message upon initialization:
-        # 1. "The mistery word has {num_letters} characters"
-        # 2. {word_guessed}
+        print(f"The mistery word has {self.num_letters} characters")
+        print(self.word_guessed)
         pass
+    
+    @staticmethod
+    def _character_index(word):
+        character_set = defaultdict(list)
+        index = 0
+        for letter in word:
+            character_set[letter].append(index)
+            index += 1
+        return character_set
 
     def check_letter(self, letter) -> None:
         '''
@@ -65,6 +80,14 @@ class Hangman:
         # TODO 3: If the letter is not in the word, reduce the number of lives by 1
         # Be careful! A letter can contain the same letter more than once. TIP: Take a look at the index() method in the string class
         pass
+        if letter in self.character_index:
+            for letter_index in self.character_index[letter]:
+                self.word_guessed[letter_index] = letter
+        else:
+            self.num_lives -= 1
+        
+        self.list_letters.append(letter)
+
 
     def ask_letter(self):
         '''
@@ -73,6 +96,9 @@ class Hangman:
         2. If the character is a single character
         If it passes both checks, it calls the check_letter method.
         '''
+        letter = input('Enter a letter').lower()
+        while len(letter) == 1:
+            
         # TODO 1: Ask the user for a letter iteratively until the user enters a valid letter
         # TODO 1: Assign the letter to a variable called `letter`
         # TODO 1: The letter has to comply with the following criteria: It has to be a single character. If it is not, print "Please, enter just one character"
